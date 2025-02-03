@@ -1,7 +1,11 @@
 import os
+import sys
 import re
 import itertools
 import random
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))  # Current script's directory
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))  # Parent directory
 
 import numpy as np
 import scipy.io as scio
@@ -262,6 +266,9 @@ class SynthTextDataSet(CraftBaseDataset):
         return image, char_bbox
 
     def make_gt_score(self, index):
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print(self.data_dir)
+        print(self.img_names[index][0])
         img_path = os.path.join(self.data_dir, self.img_names[index][0])
         image = cv2.imread(img_path, cv2.IMREAD_COLOR)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -388,6 +395,12 @@ class CustomDataset(CraftBaseDataset):
     def load_data(self, index):
         img_name = self.img_names[index]
         img_path = os.path.join(self.img_dir, img_name)
+
+        # 🔍 Debugging: Try loading the image
+        image = cv2.imread(img_path)
+        if image is None:
+            raise ValueError(f"Failed to load image: {img_path}. Check format and permissions.")
+
         image = cv2.imread(img_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 

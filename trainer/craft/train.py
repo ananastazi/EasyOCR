@@ -4,6 +4,8 @@ import os
 import shutil
 import time
 import multiprocessing as mp
+from pathlib import Path
+
 import yaml
 
 import numpy as np
@@ -449,9 +451,10 @@ def main():
         os.makedirs(res_dir)
 
     # Duplicate yaml file to result_dir
-    shutil.copy(
-        "config/" + args.yaml + ".yaml", os.path.join(res_dir, args.yaml) + ".yaml"
-    )
+    yaml_path = Path(args.yaml).with_suffix(".yaml")
+    destination_path = Path(res_dir) / yaml_path.name
+
+    shutil.copy(str(yaml_path), str(destination_path))
 
     if config["mode"] == "weak_supervision":
         mode = "weak_supervision"

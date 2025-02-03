@@ -3,7 +3,7 @@ wandb_opt: False
 results_dir: "./exp/"
 vis_test_dir: "./vis_result/"
 
-data_root_dir: "D:/Personal/Uni/4_point/thesis/projects/EasyOCR/trainer/craft/CRAFT_data/"
+data_root_dir: "./CRAFT_data/"
 score_gt_dir: None # "/data/ICDAR2015_official_supervision"
 mode: "weak_supervision"
 
@@ -14,11 +14,11 @@ train:
   synth_data_dir: "/data/SynthText/"
   synth_ratio: 5
   real_dataset: custom
-  ckpt_path: "D:/Personal/Uni/4_point/thesis/projects/EasyOCR/trainer/craft/pretrained_model/CRAFT_clr_amp_14000.pth"
-  eval_interval: 10
-  batch_size: 1
+  ckpt_path: "./pretrained_model/CRAFT_clr_amp_14000.pth"
+  eval_interval: 100
+  batch_size: 8
   st_iter: 0
-  end_iter: 80
+  end_iter: 28125
   lr: 0.0001
   lr_decay: 7500
   gamma: 0.2
@@ -88,8 +88,8 @@ train:
 test:
   trained_model : null
   custom_data:
-    test_set_size: 20
-    test_data_dir: "D:/Personal/Uni/4_point/thesis/projects/EasyOCR/trainer/craft/CRAFT_data"
+    test_set_size: 500
+    test_data_dir: "./CRAFT_data/"
     text_threshold: 0.75
     low_text: 0.5
     link_threshold: 0.2

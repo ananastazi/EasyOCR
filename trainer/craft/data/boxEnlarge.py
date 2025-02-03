@@ -53,7 +53,8 @@ def enlargebox(box, h, w, enlarge_size, horizontal_text_bool):
     Apoint, Bpoint, Cpoint, Dpoint = box
     K1, B1 = lineBiasAndK(box[0], box[2])
     K2, B2 = lineBiasAndK(box[3], box[1])
-    X = (B2 - B1)/(K1 - K2)
+    epsilon = 1e-8
+    X = (B2 - B1) / (K1 - K2 + epsilon)
     Y = K1 * X + B1
     center = [X, Y]
 
