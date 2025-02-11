@@ -6,7 +6,7 @@ import json
 import string
 from autocorrect import Speller
 
-from ocr_service.consts import CURRENCIES, DATE_REGEX, CLEAN_DICT
+from consts import CURRENCIES, DATE_REGEX, CLEAN_DICT
 
 
 # Create a spell checker.
@@ -158,7 +158,7 @@ def extract_items(candidate_text):
         raw_item = m.group(1).strip()
         item_name = postprocess_item_name(raw_item)
         price = m.group(2).strip()
-        items.append([item_name, price])
+        items.append({ 'spent_on': item_name, 'amount': price})
     return items
 
 # ---------------------------
@@ -172,7 +172,7 @@ def reconcile_total(metadata, items):
         except Exception:
             total_price = ""
     if len(items) == 1 and total_price:
-        items[0][1] = total_price
+        items[0]['amount'] = total_price
     return total_price
 
 # ---------------------------
@@ -191,15 +191,22 @@ def extract_receipt_data(ocr_paragraphs):
     if not items and metadata.get("total_price"):
         candidate_items = [line for line in combined_lines if line and re.search(r'[a-zA-Zа-яіїєґ]', line)]
         if len(candidate_items) == 1:
-            items = [[candidate_items[0], metadata["total_price"]]]
+            items = [{ 'spent_on': candidate_items[0], 'amount': metadata["total_price"] }]
     total_price = reconcile_total(metadata, items)
     metadata['total_price'] = total_price
+    payment_type = metadata.get("payment_method", "")
+    
+    if payment_type.lower() == "готівка":
+        payment_type = "Cash"
+    elif payment_type.lower() == "картка" or payment_type.lower().startswith("кар"):
+        payment_type = "Card"
+    
     result = {
         "date": metadata.get("date", ""),
-        "payment_method": metadata.get("payment_method", ""),
+        "payment_type": payment_type,
         "currency": metadata.get("currency", ""),
-        "items": items,
-        "total_price": metadata.get("total_price", "")
+        "expenses": items,
+        "total": metadata.get("total_price", "")
     }
     return result
 
@@ -223,3 +230,4 @@ if __name__ == '__main__':
     receipt_data = extract_receipt_data(ocr_output)
     json_result = json.dumps(receipt_data, ensure_ascii=False, indent=2)
     print(json_result)
+
